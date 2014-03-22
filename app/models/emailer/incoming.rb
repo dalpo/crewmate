@@ -153,13 +153,11 @@ module Emailer::Incoming
       return value if value.blank?
 
       charset = @charsets[field.to_s]
+
       if charset and charset.downcase != 'utf-8'
-        begin
-          value = Iconv.iconv('utf-8', charset, value).first
-        rescue Iconv::IllegalSequence, Iconv::InvalidEncoding, Errno::EINVAL
-          # do nothing
-        end
+        value.encode!("UTF-8", :invalid => :replace, :undef => :replace, :replace => "?")
       end
+
       return value
     end
   end
